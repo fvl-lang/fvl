@@ -143,11 +143,13 @@ No Solidity. No audits. No vulnerabilities from implementation bugs.
 - Rust 1.75+
 Linux/macOS
 > curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+<br>
 Windows
 > https://win.rustup.rs/x86_64
-
+<br>
 - Foundry (for local Ethereum node)
 > curl -L https://foundry.paradigm.xyz | bash && foundryup
+<br>
 
 ### Installation
 
@@ -420,7 +422,7 @@ Primitive additions are carefully evaluated to maintain language coherence.
 ## Community
 
 - **Twitter/X:** [@FVL_Finance](https://twitter.com/fvl_finance)
-- **Discord:** [discord.gg/uRrtJQrp](https://discord.gg/uRrtJQrp) // PATCH
+- **Discord:** [discord.gg/uRrtJQrp](https://discord.gg/uRrtJQrp)
 
 ---
 
