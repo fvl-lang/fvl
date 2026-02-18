@@ -1,0 +1,45 @@
+system: "SimpleSwap"
+
+pool:
+  collect:
+    from:
+      type: anyone
+    what:
+      type: eth
+    min:
+      type: zero
+    max:
+      type: none
+    cap:
+      type: none
+
+rules:
+  conditions:
+    - if:
+        type: swap_requested
+      then:
+        type: execute_swap
+  
+  distribute:
+    formula:
+      type: proportional
+    to:
+      type: contributors
+    triggers: on_swap
+
+rights:
+  anyone: [swap, add_liquidity]
+  contributors: [remove_liquidity]
+  admin: [pause, set_fees]
+
+time:
+  start:
+    type: now
+  end:
+    type: none
+  locks:
+    type: none
+  vesting:
+    type: none
+
+oracles: []

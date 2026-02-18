@@ -1,0 +1,60 @@
+system: "LendingPool"
+
+pool:
+  collect:
+    from:
+      type: anyone
+    what:
+      type: erc20
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    min:
+      type: value
+      amount: "100"
+    max:
+      type: none
+    cap:
+      type: value
+      amount: "10000000"
+
+rules:
+  conditions:
+    - if:
+        type: collateral_ratio_lt
+        ratio: "150"
+      then:
+        type: liquidate
+        target: "borrower"
+    
+    - if:
+        type: utilization_gt
+        ratio: "90"
+      then:
+        type: increase_interest_rate
+  
+  distribute:
+    formula:
+      type: proportional
+    to:
+      type: contributors
+    triggers: continuous
+
+rights:
+  anyone: [view]
+  contributors: [deposit, withdraw]
+  borrowers: [borrow, repay]
+  liquidators: [liquidate]
+
+time:
+  start:
+    type: now
+  end:
+    type: none
+  locks:
+    type: none
+  vesting:
+    type: none
+
+oracles:
+  - name: "eth_price"
+    type: "price_feed"
+    source: "chainlink/ETH-USD"

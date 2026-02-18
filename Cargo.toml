@@ -1,0 +1,25 @@
+[package]
+name = "fvl-parser"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+serde_json = "1.0"
+sha3 = "0.10"
+hex = "0.4"
+thiserror = "1.0"
+regex = "1.10"
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4.0", features = ["derive"] }
+colored = "2.0"
+prettytable-rs = "0.10"
+
+[[bin]]
+name = "fvl"
+path = "src/bin/fvl.rs"
+
+[[bin]]
+name = "submitter"
+path = "src/bin/submitter.rs"
