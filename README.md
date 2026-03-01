@@ -1,12 +1,4 @@
 
-The deeper implication of that boundary is significant. Most financial systems that have been exploited historically - the DAO hack, various DeFi exploits - were exploited precisely at the arbitrary computation boundary. The vulnerability wasn’t in the financial logic, it was in the imperative execution layer surrounding it. FVL’s thesis is that if the financial logic is fully declarative and deterministic, that entire class of exploit surface disappears by construction.
-
-That’s a security argument, not just an accessibility argument. And it’s stronger than the accessibility framing you lead with in the README.
-
-Which raises a presentation question - the README currently frames FVL primarily around accessibility, no Solidity required, deploy in minutes, accessible to non-developers. That’s a valid entry point but it undersells the deeper architectural argument. The sophisticated audience you’re seeking feedback from will find the determinism-as-security-boundary argument more intellectually compelling than the accessibility argument.
-
-The accessibility is a consequence of the architectural decision. The architectural decision is the thesis.
-
 # FVL: Financial Value Language
 
 **A declarative execution layer for financial coordination on Ethereum.**
