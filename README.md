@@ -215,7 +215,7 @@ The most useful contributions at this stage are boundary challenges — financia
 
 Primitive additions are held to a high standard. Every addition expands the attack surface.
 
-See <CONTRIBUTING.md> for guidelines.
+See (CONTRIBUTING.md) for guidelines.
 
 -----
 
@@ -236,7 +236,7 @@ See <CONTRIBUTING.md> for guidelines.
 
 ## License
 
-GPL-3.0.
+GPL-3.0. See (LICENSE)
 
 -----
 
