@@ -1,32 +1,53 @@
+
+The deeper implication of that boundary is significant. Most financial systems that have been exploited historically - the DAO hack, various DeFi exploits - were exploited precisely at the arbitrary computation boundary. The vulnerability wasn’t in the financial logic, it was in the imperative execution layer surrounding it. FVL’s thesis is that if the financial logic is fully declarative and deterministic, that entire class of exploit surface disappears by construction.
+
+That’s a security argument, not just an accessibility argument. And it’s stronger than the accessibility framing you lead with in the README.
+
+Which raises a presentation question - the README currently frames FVL primarily around accessibility, no Solidity required, deploy in minutes, accessible to non-developers. That’s a valid entry point but it undersells the deeper architectural argument. The sophisticated audience you’re seeking feedback from will find the determinism-as-security-boundary argument more intellectually compelling than the accessibility argument.
+
+The accessibility is a consequence of the architectural decision. The architectural decision is the thesis.
+
 # FVL: Financial Value Language
 
-**Build financial systems from composable blocks. No code required.**
+**A declarative execution layer for financial coordination on Ethereum.**
 
-FVL is an Optimistic Rollup purpose-built for financial coordination. Deploy sophisticated treasury management, staking mechanisms, lending pools, and crowdfunding systems by combining simple, verified building blocks.
+Most DeFi vulnerabilities don’t originate in financial logic. They originate in the arbitrary computation surrounding it. FVL eliminates that surface entirely by drawing a formal boundary: if a financial system can be fully described as deterministic state transitions over known primitives, it belongs on FVL. If it requires arbitrary computation whose values are unknown before execution, it belongs on Ethereum.
 
----
+This boundary is not a limitation. It is the thesis.
 
-## Why FVL?
+-----
 
-Most Layer 2s scale Ethereum. **FVL specializes it.**
+## The Core Argument
 
-Traditional DeFi requires:
-- Writing Solidity smart contracts
-- Months of development
-- Expensive security audits
-- Deep technical expertise
+Ethereum is Turing-complete by design. That generality is powerful and necessary for systems that require arbitrary computation. But most financial coordination — staking, treasury management, lending pools, crowdfunding, vesting schedules — does not require arbitrary computation. These systems are patterns. Their state transitions are fully describable in advance. Their logic is declarative, not imperative.
 
-FVL provides:
-- Declarative YAML templates
-- Deploy in minutes
-- Verified primitives (audit once, reuse forever)
-- Accessible to non-developers
+When you implement a declarative pattern in a Turing-complete environment, you inherit the entire attack surface of that environment without needing any of its power. The DAO hack, reentrancy exploits, integer overflow vulnerabilities — these are not failures of financial logic. They are failures that occur at the boundary between financial intent and arbitrary execution.
 
-**Financial systems are patterns. FVL gives you the building blocks.**
+FVL removes that boundary by building a purpose-specific execution environment where only financial primitives exist. No loops. No recursion. No unbounded computation. Given the same transactions in the same order, state is always identical. The system is fully replayable and independently verifiable by construction.
 
----
+**FVL does not try to replace Ethereum. It defines the subset of financial systems that should never have required it.**
 
-## Example: Custom Staking System
+-----
+
+## The Boundary Defined
+
+A system belongs on FVL if:
+
+- Its state transitions are fully deterministic and describable before execution
+- Its logic can be expressed as conditions over known primitives
+- Its values are known or oracle-sourced, not computed on the fly
+
+A system belongs on Ethereum if:
+
+- It requires arbitrary computation whose output cannot be known in advance
+- It requires loops, recursion, or unbounded processing
+- Its logic cannot be expressed declaratively without loss of correctness
+
+This is a formal distinction, not a practical convenience. It maps directly onto the declarative versus imperative boundary in programming language theory.
+
+-----
+
+## What This Means in Practice
 
 ```yaml
 system: "CommunityStaking"
@@ -77,20 +98,16 @@ rights:
 oracles: []
 ```
 
-**That's it.** Deploy this template and you have a fully functional staking system with:
-- Token-gated access
-- Time-locked withdrawals
-- Proportional reward distribution
-- Linear vesting
-- Role-based permissions
+This is a fully functional staking system with token-gated access, time-locked withdrawals, proportional reward distribution, linear vesting, and role-based permissions. It is not a configuration file passed to a smart contract. It is the system. The execution environment parses, validates, and runs it directly — no Solidity, no implementation layer, no surface area between intent and execution where vulnerabilities emerge.
 
-No Solidity. No audits. No vulnerabilities from implementation bugs.
+-----
 
----
+## The Primitive Set
 
-## The Building Blocks
+FVL’s primitives are deliberately constrained to what financial coordination actually requires. Primitive additions are evaluated against one criterion: is this a fundamental building block of financial coordination, or is it a special case that should be composed from existing primitives?
 
 ### Access Control
+
 - `anyone` — open to all
 - `token_holders(address)` — ERC20 gated
 - `nft_holders(address)` — NFT gated
@@ -98,6 +115,7 @@ No Solidity. No audits. No vulnerabilities from implementation bugs.
 - `min_balance(amount, token)` — minimum holdings
 
 ### Assets
+
 - `eth` — native Ethereum
 - `erc20(address)` — fungible tokens
 - `erc721(address)` — NFTs
@@ -105,6 +123,7 @@ No Solidity. No audits. No vulnerabilities from implementation bugs.
 - `multiple([...])` — multi-asset systems
 
 ### Conditions
+
 - Balance checks: `balance > X`
 - Time triggers: `time > timestamp`
 - Oracle data: `price(feed) < threshold`
@@ -112,6 +131,7 @@ No Solidity. No audits. No vulnerabilities from implementation bugs.
 - Value tracking: `total_value == cap`
 
 ### Actions
+
 - `enable(permission)` — grant access
 - `disable(permission)` — revoke access
 - `liquidate(target)` — enforce penalties
@@ -120,6 +140,7 @@ No Solidity. No audits. No vulnerabilities from implementation bugs.
 - `transfer(amount, from, to)` — move value
 
 ### Distribution Formulas
+
 - `proportional` — by stake size
 - `equal` — even split
 - `weighted(metric)` — custom weighting
@@ -127,127 +148,36 @@ No Solidity. No audits. No vulnerabilities from implementation bugs.
 - `quadratic` — quadratic funding
 
 ### Time Mechanics
+
 - `linear(duration)` — vesting over time
 - `cliff(duration)` — unlock after period
 - `graded(schedule)` — milestone-based
 - Lock periods and release schedules
 
-**Combine these blocks to create any financial system imaginable.**
-
----
-
-## Quick Start
-
-### Prerequisites
-
-- Rust 1.75+
-Linux/macOS
-> curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-<br>
-Windows
-> https://win.rustup.rs/x86_64
-<br>
-- Foundry (for local Ethereum node)
-> curl -L https://foundry.paradigm.xyz | bash && foundryup
-<br>
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/fvl-lang/fvl.git
-cd fvl
-
-# Build
-cargo build --release
-
-# Run tests
-cargo test
-```
-
-### Start Local Infrastructure
-
-```bash
-# Terminal 1: Start local Ethereum node (Need Foundry installed)
-anvil
-
-# Terminal 2: Deploy settlement contract
-bash contracts/deploy.sh
-
-# Terminal 3: Start the REPL
-cargo run --bin fvl
-```
-
-### Deploy Your First System
-
-```bash
-# In the FVL REPL
-> config set-sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-> deploy tests/fixtures/simple_swap.yaml
-
-# Mint some test balance
-> mint 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 10000 ETH
-
-# Transfer assets
-> transfer 0xf39Fd6... 0xabcdef... 500 ETH
-
-# Check state
-> state
-
-# View blocks
-> blocks
-```
-
-**You just deployed a financial system to an L2.**
-
----
+-----
 
 ## Use Cases
 
-### Community Treasuries
-Deploy custom treasury management with:
-- Multi-condition spending rules
-- Tiered approval thresholds
-- Vesting for team allocations
-- Transparent on-chain logic
+The following systems are fully expressible in FVL because their state transitions are deterministic and their logic is declarative.
 
-### Custom Staking
-Create unique staking mechanisms:
-- Dynamic reward formulas
-- Lock period requirements
-- Performance-based bonuses
-- Integration with price oracles
+**Community Treasuries** — multi-condition spending rules, tiered approval thresholds, vesting for team allocations, transparent on-chain logic.
 
-### Lending Pools
-Launch lending systems with:
-- Custom collateralization ratios
-- Oracle-based liquidations
-- Interest rate curves
-- Risk-adjusted parameters
+**Custom Staking** — dynamic reward formulas, lock period requirements, performance-based bonuses, oracle integration.
 
-### Crowdfunding
-Build fundraising campaigns:
-- Min/max contribution limits
-- Refund conditions
-- Milestone-based releases
-- Automated distributions
+**Lending Pools** — custom collateralization ratios, oracle-based liquidations, interest rate curves, risk-adjusted parameters.
 
-### Yield Aggregators
-Compose systems that:
-- Route deposits to highest yield
-- Rebalance based on conditions
-- Compound rewards automatically
-- Distribute profits proportionally
+**Crowdfunding** — min/max contribution limits, refund conditions, milestone-based releases, automated distributions.
 
-**Financial systems limited only by imagination.**
+**Yield Aggregators** — deposit routing, condition-based rebalancing, automatic compounding, proportional profit distribution.
 
----
+-----
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────┐
 │           User Templates (YAML)          │
+│     (Declarative financial intent)       │
 └─────────────────┬───────────────────────┘
                   │
                   ▼
@@ -277,27 +207,76 @@ Compose systems that:
 
 ### Key Properties
 
-**Deterministic Execution**
-- Given the same transactions in the same order, state is always identical
-- Perfect replayability
-- Independent verification
+**Deterministic Execution** — given the same transactions in the same order, state is always identical. Perfect replayability. Independent verification without trust assumptions about the execution environment.
 
-**Constrained Language**
-- Only financial primitives allowed
-- No loops, recursion, or unbounded computation
-- Attack surface minimized by design
+**Constrained Language** — only financial primitives are expressible. No loops, recursion, or unbounded computation. The attack surface is minimized by construction, not by auditing.
 
-**Composable Systems**
-- Systems can reference other systems
-- Build complex coordination from simple blocks
-- Unlimited depth of composition
+**Composable Systems** — systems can reference other systems. Complex coordination emerges from simple, verified blocks. Primitives are audited once and reused without re-auditing.
 
-**Ethereum Settlement**
-- State roots anchored on L1
-- Full transaction data on-chain
-- Inherits Ethereum security guarantees
+**Ethereum Settlement** — state roots anchored on L1. Full transaction data on-chain. Inherits Ethereum security guarantees at the settlement layer.
 
----
+-----
+
+## Quick Start
+
+### Prerequisites
+
+- Rust 1.75+
+
+Linux/macOS
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+Windows
+
+```
+https://win.rustup.rs/x86_64
+```
+
+- Foundry (for local Ethereum node)
+
+```bash
+curl -L https://foundry.paradigm.xyz | bash && foundryup
+```
+
+### Installation
+
+```bash
+git clone https://github.com/fvl-lang/fvl.git
+cd fvl
+cargo build --release
+cargo test
+```
+
+### Start Local Infrastructure
+
+```bash
+# Terminal 1: Start local Ethereum node
+anvil
+
+# Terminal 2: Deploy settlement contract
+bash contracts/deploy.sh
+
+# Terminal 3: Start the REPL
+cargo run --bin fvl
+```
+
+### Deploy Your First System
+
+```bash
+# In the FVL REPL
+> config set-sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+> deploy tests/fixtures/simple_swap.yaml
+
+> mint 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 10000 ETH
+> transfer 0xf39Fd6... 0xabcdef... 500 ETH
+> state
+> blocks
+```
+
+-----
 
 ## Current Status: MVP
 
@@ -309,41 +288,69 @@ Compose systems that:
 - Block production and ordering
 - State root generation
 - Ethereum settlement (state root submission)
-- Interactive REPL for system interaction
-- Command-line interface with JSON output
+- Interactive REPL
+- CLI with JSON output
 
-### Known Limitations (Roadmap Items)
+### Known Limitations
 
-**Trust Assumptions:**
+**Trust Assumptions**
+
 - Centralized sequencer (users must trust operator)
 - No fraud proofs yet (cannot challenge invalid state)
 - No forced inclusion (sequencer can censor)
 
-**Asset Limitations:**
+**Asset Limitations**
+
 - No L1↔L2 bridge (internal balances only)
 - Cannot deposit/withdraw real assets
-- Testing/demo environment only
+- Testing and prototyping environment only
 
-
----
+-----
 
 ## Contributing
 
-We're actively seeking:
-- **Design partners** — DAOs/protocols willing to deploy real systems and provide feedback
-- **Template creators** — build and share financial system templates
+The most valuable contributions at this stage are design challenges — financial systems that appear to fall within FVL’s boundary but cannot be expressed with current primitives. These either reveal missing primitives or sharpen the boundary definition.
+
+We are actively seeking:
+
+- **Design partners** — DAOs and protocols willing to attempt real system deployment and report where the primitive set breaks down
+- **Template creators** — verified templates for common financial patterns
 - **Contributors** — improvements to primitives, tooling, documentation
 
 ### Areas of Focus
 
-1. **Primitive Design** — which building blocks are missing?
-2. **Template Library** — verified templates for common patterns
-3. **Developer Tools** — better debugging, testing, visualization
-4. **Documentation** — guides, tutorials, examples
+1. **Primitive completeness** — which financial coordination patterns cannot be expressed declaratively with current primitives?
+1. **Boundary stress testing** — cases that sit at the edge of the declarative/imperative boundary
+1. **Template library** — verified templates for common patterns
+1. **Developer tooling** — debugging, testing, visualization
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+See <CONTRIBUTING.md> for guidelines.
 
----
+-----
+
+## FAQ
+
+### How is this different from other L2s?
+
+Most L2s scale Ethereum by providing cheaper EVM execution. FVL specializes Ethereum by replacing EVM execution entirely for a specific class of systems. The tradeoff is deliberate — less expressiveness in exchange for formal guarantees that general-purpose execution cannot provide. Not better or worse than Optimism or Arbitrum. Categorically different in purpose.
+
+### Why does constrained expressiveness matter for security?
+
+Because the attack surface of a system is proportional to its expressive power. A Turing-complete environment can express any computation, including computations that were never intended. FVL’s primitive set can only express what it was designed to express. Vulnerabilities that emerge from arbitrary computation — reentrancy, unbounded loops, unexpected state transitions — are not possible by construction because the constructs that produce them do not exist in the language.
+
+### Why YAML?
+
+Financial systems are patterns. YAML makes those patterns explicit and human-readable. The goal is not convenience — it is to make the full logic of a financial system visible and auditable without requiring code comprehension. A non-technical stakeholder reading a FVL template can verify what the system does. That property is impossible to achieve with Solidity.
+
+### Can I use this in production?
+
+Not yet. The MVP proves the architectural thesis and validates the primitive set. Production use requires fraud proofs, an asset bridge, and a decentralized sequencer. These are on the roadmap.
+
+### How do I propose a new primitive?
+
+Open an issue with the use case, proposed syntax, security considerations, and an argument for why it is a fundamental building block rather than a composition of existing primitives. The standard for inclusion is high by design. Primitive additions expand the attack surface.
+
+-----
 
 ## Documentation
 
@@ -352,105 +359,29 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 - [FVL Overview](docs/FVL_PROJECT_OVERVIEW.md) — technical deep dive
 - [Template Examples](tests/fixtures/) — example systems
 
----
-
-## FAQ
-
-### Is this an L2?
-
-FVL is an Optimistic Rollup that settles to Ethereum. Currently in MVP stage:
-- Transactions are executed off-chain
-- State roots are submitted to Ethereum 
-- Full transaction data is published (data availability)
-- Missing fraud proofs (planned for next phase)
-
-### How is this different from other L2s?
-
-Most L2s (Optimism, Arbitrum) scale Ethereum by providing cheaper EVM execution.
-
-FVL **specializes** Ethereum by providing a domain-specific language for financial systems.
-
-Not better or worse — different purpose.
-
-### Can I use this in production?
-
-**Not yet.** MVP is for:
-- Testing concepts
-- Prototyping systems
-- Validating primitives
-- Building template library
-
-Production use requires:
-- Fraud proof system
-- Asset bridge
-- Decentralized sequencer
-
-
-### Why YAML instead of Solidity?
-
-Financial systems follow predictable patterns. YAML:
-- Makes patterns explicit
-- Enforces safety through constraints
-- Enables verification without auditing code
-- Accessible to non-developers
-
-Solidity is Turing-complete — powerful but dangerous for financial coordination.
-
-### What about composability with existing DeFi?
-
-Post-MVP will include:
-- Asset bridge for L1↔L2 transfers
-- Oracle integration (Chainlink, etc.)
-- Cross-system references within FVL
-
-Composability with external DeFi protocols requires bridge infrastructure.
-
-### How do I propose a new primitive?
-
-Open an issue with:
-- Use case that can't be expressed with current primitives
-- Proposed syntax
-- Security considerations
-- Why it's fundamental (not a special case)
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-Primitive additions are carefully evaluated to maintain language coherence.
-
----
+-----
 
 ## Community
 
 - **Twitter/X:** [@FVL_Finance](https://twitter.com/fvl_finance)
 - **Discord:** [discord.gg/uRrtJQrp](https://discord.gg/uRrtJQrp)
 
----
+-----
 
 ## License
 
-Licensed under the GNU General Public License v3.0 (GPLv3).
+GNU General Public License v3.0. Use, modify, and distribute freely. Derivative works must remain open source under GPLv3. See <LICENSE> for full terms.
 
-This means:
-- You can use, modify, and distribute this software
-- Any derivative work must also be open source under GPLv3
-- Commercial use is allowed
-- You must disclose source code of any modifications
-
-See [LICENSE](LICENSE) for full terms.
-
----
+-----
 
 ## Acknowledgments
 
-Built on the shoulders of:
-- Ethereum Foundation (settlement layer)
-- Optimism (rollup architecture inspiration)
-- Foundry (development tooling)
+- Ethereum Foundation — settlement layer
+- Optimism — rollup architecture
+- Foundry — development tooling
 
----
+-----
 
-**FVL: Financial systems as composable building blocks.**
-
-Not just another L2. A specialized platform for financial coordination.
+**FVL: The execution layer for financial systems that don’t require arbitrary computation.**
 
 [Get Started](#quick-start) | [View Examples](tests/fixtures/) | [Read Docs](docs/) | [Join Community](#community)
