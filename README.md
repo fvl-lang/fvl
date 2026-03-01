@@ -236,7 +236,7 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-GPL-3.0.See[LICENSE](LICENSE)
+GPL-3.0. [LICENSE](LICENSE)
 
 -----
 
