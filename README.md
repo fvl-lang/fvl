@@ -206,7 +206,7 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
 -----
 
 ## Documentation
-
+- [Whitepaper](docs/FVL_Whitepaper.pdf)
 - [Language Specification](docs/FVL_SPEC.md)
 - [REPL Guide](docs/FVL_REPL_Guide.md)
 - [Project Overview](docs/FVL_PROJECT_OVERVIEW.md)
