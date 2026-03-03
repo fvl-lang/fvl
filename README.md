@@ -191,20 +191,6 @@ cargo run --bin fvl
 
 -----
 
-## Current Status: MVP
-
-**Working:** YAML system deployment, deterministic state computation, block production, state root generation, Ethereum settlement, interactive REPL, CLI with JSON output.
-
-**Not yet:**
-
-- Fraud proofs (centralized sequencer, cannot challenge invalid state)
-- L1↔L2 asset bridge (internal balances only)
-- Decentralized sequencer
-
-Not production ready. MVP validates the thesis and the primitive set.
-
------
-
 ## Contributing
 
 The most useful contributions at this stage are boundary challenges — financial systems that appear declarative but cannot be expressed with current primitives. These either surface missing primitives or sharpen the boundary definition.
@@ -225,12 +211,6 @@ See [CONTRIBUTING](CONTRIBUTING.md) for guidelines.
 - [REPL Guide](docs/FVL_REPL_Guide.md)
 - [Project Overview](docs/FVL_PROJECT_OVERVIEW.md)
 - [Template Examples](tests/fixtures/)
-
------
-
-## Community
-
-**Twitter/X:** [@FVL_Finance](https://twitter.com/fvl_finance) · **Discord:** [discord.gg/uRrtJQrp](https://discord.gg/uRrtJQrp)
 
 -----
 
